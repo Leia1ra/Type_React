@@ -2,6 +2,7 @@ import React, {JSX, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {diffieHellman} from "node:crypto";
+import {Readable} from "node:stream";
 
 function App() {
 	const post: string = '강남 우동 맛집';
@@ -24,6 +25,8 @@ function App() {
 	const [modal, setModal]
 		= useState([false,false,false]);
 
+
+	const [inputData, setInputData] = useState("");
 
 	return (
 		<div className="App">
@@ -79,10 +82,30 @@ function App() {
 							{heart[index]}
 							<p>2월 17일 발행</p>
 							{modal[index] ? <Modal i={index} p={data} set={setData}/> : null}
+							<button onClick={()=>{
+								// let copy = data
+								data.splice(index,1);
+								setData([...data])
+
+							}}>글 삭제</button>
 						</div>
 					)
 				})
 			}
+			<input type="text"
+				   onChange={(event)=>{
+					   setInputData(event.target.value);
+					   console.log(inputData)
+				   }}/>
+			<button onClick={()=>{
+				let copy = data;
+				// copy.push(inputData);
+				copy.unshift(inputData);
+				setData([...copy])
+			}}>글 입력</button>
+
+
+			<Modal2 p={{name:"lee",age: 26}}/>
 		</div>
 	);
 }
@@ -115,3 +138,33 @@ function Modal(props:Props) {
 }
 
 export default App;
+
+type Modal2StateType = {
+	name:String;
+	age:number
+}
+
+class Modal2 extends React.Component<any, Modal2StateType>{
+	constructor(props?:Readonly<any>|any) {
+		super(props);
+		this.state = {
+			name:'kim',
+			age:20
+		}
+	}
+	render() {
+		return (
+			<section>
+				<article>
+					안녕 State {this.state.name} {this.state.age}
+				</article>
+				<article>
+					안녕 Props {this.props.p.name} {this.props.p.age}
+				</article>
+				<button onClick={()=>{
+					this.setState({age:21})
+				}}>버튼</button>
+			</section>
+		);
+	}
+}
